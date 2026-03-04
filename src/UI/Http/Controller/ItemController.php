@@ -13,12 +13,14 @@ use App\Application\Item\CreateItemCommand;
 use App\Application\Item\CreateItemHandler;
 use App\UI\Http\Service\ItemQueryService;
 use App\UI\Http\Response\ErrorResponse;
+use App\UI\Http\Response\ItemResponseFactory;
 
 class ItemController
 {
     public function __construct(
         private CreateItemHandler $createItemHandler,
-        private ItemQueryService $itemQueryService
+        private ItemQueryService $itemQueryService,
+        private ItemResponseFactory $itemResponseFactory
     ) {}
 
     #[Route('/api/items', methods: ['POST'])]
@@ -37,10 +39,10 @@ class ItemController
 
         $item = $this->createItemHandler->handle($command);
 
-        return new JsonResponse([
-            'id' => $item->getId()->toRfc4122(),
-            'name' => $item->getName()
-        ], 201);
+        return new JsonResponse(
+            $this->itemResponseFactory->create($item),
+            201
+        );
     }
 
     #[Route('/api/items', methods: ['GET'])]
@@ -52,19 +54,8 @@ class ItemController
             return $result;
         }
 
-        $items = [];
-
-        foreach ($result as $item) {
-            $items[] = [
-                'id' => $item->getId()->toRfc4122(),
-                'name' => $item->getName(),
-                'description' => $item->getDescription(),
-                'latitude' => $item->getLatitude(),
-                'longitude' => $item->getLongitude(),
-                'categoryId' => $item->getCategoryId()->toRfc4122(),
-            ];
-        }
-
-        return new JsonResponse($items);
+        return new JsonResponse(
+            $this->itemResponseFactory->createCollection($result)
+        );
     }
 }
