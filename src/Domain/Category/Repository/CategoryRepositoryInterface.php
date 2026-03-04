@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\Category\Repository;
 
 use App\Domain\Category\Entity\Category;
+use Symfony\Component\Uid\Uuid;
 
 interface CategoryRepositoryInterface
 {

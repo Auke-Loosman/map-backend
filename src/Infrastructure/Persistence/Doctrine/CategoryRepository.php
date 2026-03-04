@@ -7,6 +7,7 @@ namespace App\Infrastructure\Persistence\Doctrine;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Domain\Category\Entity\Category;
 use App\Domain\Category\Repository\CategoryRepositoryInterface;
+use Symfony\Component\Uid\Uuid;
 
 class CategoryRepository implements CategoryRepositoryInterface
 {

@@ -7,15 +7,16 @@ namespace App\Tests\Unit\Domain\Category;
 use PHPUnit\Framework\TestCase;
 use PHPUnit\Framework\Attributes\DataProvider;
 use App\Domain\Category\Entity\Category;
+use Symfony\Component\Uid\Uuid;
 
 class CategoryTest extends TestCase
 {
     public function testCategoryCreation(): void
     {
-        $category = new Category('Restaurants', 1);
+        $category = new Category('Restaurants', Uuid::v4());
 
         $this->assertSame('Restaurants', $category->getName());
-        $this->assertSame(1, $category->getUserId());
+        $this->assertInstanceOf(Uuid::class, $category->getUserId());
     }
 
     #[DataProvider('invalidNames')]
@@ -23,7 +24,7 @@ class CategoryTest extends TestCase
     {
         $this->expectException(\InvalidArgumentException::class);
 
-        new Category($name, 1);
+        new Category($name, Uuid::v4());
     }
 
     public static function invalidNames(): \Generator

@@ -7,6 +7,7 @@ namespace App\Infrastructure\Persistence\Doctrine;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Domain\User\Repository\UserRepositoryInterface;
 use App\Domain\User\Entity\User;
+use Symfony\Component\Uid\Uuid;
 
 class UserRepository implements UserRepositoryInterface
 {
