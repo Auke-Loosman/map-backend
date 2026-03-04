@@ -10,7 +10,7 @@ interface CategoryRepositoryInterface
 {
     public function saveCategory(Category $category): void;
 
-    public function findCategoryById(int $id): ?Category;
+    public function findCategoryById(Uuid $id): ?Category;
 
-    public function findCategoriesByUserId(int $userId): array;
+    public function findCategoriesByUserId(Uuid $userId): array;
 }
