@@ -28,6 +28,16 @@ class CreateItemHandler
 
         $this->repository->saveItem($item);
 
+        foreach ($command->metadata as $key => $value) {
+            $metadata = new ItemMetadata(
+                $item->getId(),
+                $key,
+                $value
+            );
+
+            $this->metadataRepository->saveItemMetadata($metadata);
+        }
+
         return $item;
     }
 }
