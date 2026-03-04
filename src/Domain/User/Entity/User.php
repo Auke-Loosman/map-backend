@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Domain\User\Entity;
 
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Uid\Uuid;
 use Symfony\Component\Security\Core\User\UserInterface;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 
@@ -13,9 +14,8 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
-    #[ORM\GeneratedValue]
-    #[ORM\Column]
-    private ?int $id = null;
+    #[ORM\Column(type: 'uuid', unique: true)]
+    private Uuid $id;
 
     #[ORM\Column(unique: true)]
     private string $email;
@@ -31,6 +31,8 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         string $password,
         string $role = 'ROLE_USER'
     ) {
+        $this->id = Uuid::v4();
+
         if (empty($email)) {
             throw new \InvalidArgumentException('Email cannot be empty');
         }
@@ -48,7 +50,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->role = $role;
     }
 
-    public function getId(): ?int
+    public function getId(): Uuid
     {
         return $this->id;
     }
@@ -73,7 +75,5 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return [$this->role];
     }
 
-    public function eraseCredentials(): void
-    {
-    }
+    public function eraseCredentials(): void {}
 }
