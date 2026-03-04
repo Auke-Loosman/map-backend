@@ -7,6 +7,7 @@ namespace App\Application\Auth;
 use App\Domain\User\Repository\UserRepositoryInterface;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 use Symfony\Component\Security\Core\Exception\AuthenticationException;
+use App\Domain\User\Entity\User;
 
 class LoginHandler
 {

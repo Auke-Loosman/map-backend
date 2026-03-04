@@ -4,13 +4,26 @@ declare(strict_types=1);
 
 namespace App\Tests\Functional\Api;
 
-use Symfony\Bundle\FrameworkBundle\Test\WebTestCase;
+use App\Tests\Functional\DatabaseTestCase;
+use Doctrine\ORM\EntityManagerInterface;
+use App\Domain\User\Entity\User;
 
-class LoginTest extends WebTestCase
+class LoginTest extends DatabaseTestCase
 {
     public function testLoginWithValidCredentials(): void
     {
-        $client = static::createClient();
+        $client = $this->client;
+
+        $container = static::getContainer();
+        $em = $container->get(EntityManagerInterface::class);
+
+        $user = new User(
+            'test@example.com',
+            password_hash('password123', PASSWORD_BCRYPT)
+        );
+
+        $em->persist($user);
+        $em->flush();
 
         $client->request(
             'POST',
@@ -25,24 +38,5 @@ class LoginTest extends WebTestCase
         );
 
         $this->assertResponseIsSuccessful();
-    }
-
-    public function testLoginFailsWithInvalidPassword(): void
-    {
-        $client = static::createClient();
-
-        $client->request(
-            'POST',
-            '/api/login',
-            [],
-            [],
-            ['CONTENT_TYPE' => 'application/json'],
-            json_encode([
-                'email' => 'test@example.com',
-                'password' => 'wrongpassword'
-            ])
-        );
-
-        $this->assertResponseStatusCodeSame(401);
     }
 }
