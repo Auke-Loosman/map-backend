@@ -104,4 +104,15 @@ class ItemRepository implements ItemRepositoryInterface
 
         return $qb->getQuery()->getResult();
     }
+
+    public function findItemsWithLimit(int $limit): array
+    {
+        return $this->entityManager
+            ->createQueryBuilder()
+            ->select('i')
+            ->from(Item::class, 'i')
+            ->setMaxResults($limit)
+            ->getQuery()
+            ->getResult();
+    }
 }
