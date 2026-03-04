@@ -20,14 +20,14 @@ class CategoryRepository implements CategoryRepositoryInterface
         $this->entityManager->flush();
     }
 
-    public function findCategoryById(int $id): ?Category
+    public function findCategoryById(Uuid $id): ?Category
     {
         return $this->entityManager
             ->getRepository(Category::class)
             ->find($id);
     }
 
-    public function findCategoriesByUserId(int $userId): array
+    public function findCategoriesByUserId(Uuid $userId): array
     {
         return $this->entityManager
             ->getRepository(Category::class)
