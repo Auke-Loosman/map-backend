@@ -13,12 +13,12 @@ class GetItemsByCategoryHandler
         private ItemRepositoryInterface $repository
     ) {}
 
-    public function handle(?Uuid $categoryId): array
+    public function handle(array $categoryIds): array
     {
-        if ($categoryId === null) {
+        if (empty($categoryIds)) {
             return $this->repository->findAllItems();
         }
 
-        return $this->repository->findItemsByCategory($categoryId);
+        return $this->repository->findItemsByCategories($categoryIds);
     }
 }

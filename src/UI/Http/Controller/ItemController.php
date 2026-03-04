@@ -45,11 +45,14 @@ class ItemController
     #[Route('/api/items', methods: ['GET'])]
     public function getItems(Request $request): JsonResponse
     {
-        $categoryId = $request->query->get('categoryId');
+        $categoryIds = $request->query->all('categories');
 
-        $uuid = $categoryId ? \Symfony\Component\Uid\Uuid::fromString($categoryId) : null;
+        $uuids = array_map(
+            fn($id) => \Symfony\Component\Uid\Uuid::fromString($id),
+            $categoryIds
+        );
 
-        $items = $this->getItemsHandler->handle($uuid);
+        $items = $this->getItemsHandler->handle($uuids);
 
         $result = [];
 

@@ -34,4 +34,21 @@ class ItemRepository implements ItemRepositoryInterface
             ->getRepository(Item::class)
             ->findAll();
     }
+
+    public function findItemsByCategories(array $categoryIds): array
+    {
+        $qb = $this->entityManager
+            ->createQueryBuilder()
+            ->select('i')
+            ->from(Item::class, 'i');
+
+        if (count($categoryIds) === 1) {
+            $qb->where('i.categoryId = :category')
+            ->setParameter('category', $categoryIds[0], 'uuid');
+        } else {
+            $qb->where('i.categoryId IN (:categories)')
+            ->setParameter('categories', $categoryIds, 'uuid');
+        }
+        return $qb->getQuery()->getResult();
+    }
 }
