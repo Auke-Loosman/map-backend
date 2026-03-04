@@ -48,27 +48,58 @@ class ItemController
         $categoryIds = $request->query->all('categories');
 
         $uuids = array_map(
-            fn ($id) => \Symfony\Component\Uid\Uuid::fromString($id),
+            fn ($id) => Uuid::fromString($id),
             $categoryIds
         );
 
+        /*
+        * Bounding box
+        */
         $bboxParam = $request->query->get('bbox');
         $bbox = null;
 
-        if ($bboxParam) {
+        if ($bboxParam !== null) {
+
             $parts = explode(',', $bboxParam);
 
-            if (count($parts) === 4) {
-                $bbox = array_map('floatval', $parts);
+            if (count($parts) !== 4) {
+                return new JsonResponse(
+                    ['error' => 'bbox must contain 4 values'],
+                    400
+                );
+            }
+
+            $bbox = array_map('floatval', $parts);
+        }
+
+        /*
+        * Limit validation
+        */
+        $limit = $request->query->get('limit');
+
+        if ($limit !== null) {
+
+            $limit = (int) $limit;
+
+            if ($limit < 1 || $limit > 100) {
+                return new JsonResponse(
+                    ['error' => 'limit must be between 1 and 100'],
+                    400
+                );
             }
         }
 
-        $limit = $request->query->get('limit');
-
-        $limit = $limit !== null ? (int) $limit : null;
+        /*
+        * Sort
+        */
         $sort = $request->query->get('sort');
 
-        $items = $this->getItemsHandler->handle($uuids, $bbox, $limit, $sort);
+        $items = $this->getItemsHandler->handle(
+            $uuids,
+            $bbox,
+            $limit,
+            $sort
+        );
 
         $result = [];
 
