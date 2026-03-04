@@ -28,14 +28,21 @@ class ItemRepository implements ItemRepositoryInterface
             ->findBy(['categoryId' => $categoryId]);
     }
 
-    public function findAllItems(): array
+    public function findAllItems(?int $limit = null): array
     {
-        return $this->entityManager
-            ->getRepository(Item::class)
-            ->findAll();
+        $qb = $this->entityManager
+            ->createQueryBuilder()
+            ->select('i')
+            ->from(Item::class, 'i');
+
+        if ($limit !== null) {
+            $qb->setMaxResults($limit);
+        }
+
+        return $qb->getQuery()->getResult();
     }
 
-    public function findItemsByCategories(array $categoryIds): array
+    public function findItemsByCategories(array $categoryIds, ?int $limit = null): array
     {
         $qb = $this->entityManager
             ->createQueryBuilder()
@@ -49,6 +56,11 @@ class ItemRepository implements ItemRepositoryInterface
             $qb->where('i.categoryId IN (:categories)')
             ->setParameter('categories', $categoryIds, 'uuid');
         }
+
+        if ($limit !== null) {
+            $qb->setMaxResults($limit);
+        }
+
         return $qb->getQuery()->getResult();
     }
 
@@ -56,9 +68,10 @@ class ItemRepository implements ItemRepositoryInterface
         float $minLat,
         float $minLng,
         float $maxLat,
-        float $maxLng
+        float $maxLng,
+        ?int $limit = null
     ): array {
-        return $this->entityManager
+        $qb = $this->entityManager
             ->createQueryBuilder()
             ->select('i')
             ->from(Item::class, 'i')
@@ -67,9 +80,13 @@ class ItemRepository implements ItemRepositoryInterface
             ->setParameter('minLat', $minLat)
             ->setParameter('maxLat', $maxLat)
             ->setParameter('minLng', $minLng)
-            ->setParameter('maxLng', $maxLng)
-            ->getQuery()
-            ->getResult();
+            ->setParameter('maxLng', $maxLng);
+
+        if ($limit !== null) {
+            $qb->setMaxResults($limit);
+        }
+
+        return $qb->getQuery()->getResult();
     }
 
     public function findItemsByCategoriesAndBoundingBox(
@@ -77,7 +94,8 @@ class ItemRepository implements ItemRepositoryInterface
         float $minLat,
         float $minLng,
         float $maxLat,
-        float $maxLng
+        float $maxLng,
+        ?int $limit = null
     ): array {
         $qb = $this->entityManager
             ->createQueryBuilder()
@@ -98,8 +116,12 @@ class ItemRepository implements ItemRepositoryInterface
         } else {
 
             $qb->andWhere('i.categoryId IN (:categories)')
-            ->setParameter('categories', $categoryIds);
+            ->setParameter('categories', $categoryIds, 'uuid');
 
+        }
+
+        if ($limit !== null) {
+            $qb->setMaxResults($limit);
         }
 
         return $qb->getQuery()->getResult();

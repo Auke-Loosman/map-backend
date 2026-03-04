@@ -26,7 +26,8 @@ class GetItemsByCategoryHandler
                 $bbox[0],
                 $bbox[1],
                 $bbox[2],
-                $bbox[3]
+                $bbox[3],
+                $limit
             );
 
         } elseif ($bbox) {
@@ -35,16 +36,17 @@ class GetItemsByCategoryHandler
                 $bbox[0],
                 $bbox[1],
                 $bbox[2],
-                $bbox[3]
+                $bbox[3],
+                $limit
             );
 
         } elseif (!empty($categoryIds)) {
 
-            $items = $this->repository->findItemsByCategories($categoryIds);
+            $items = $this->repository->findItemsByCategories($categoryIds, $limit);
 
         } else {
 
-            $items = $this->repository->findAllItems();
+            $items = $this->repository->findAllItems($limit);
         }
 
         if ($limit !== null) {
