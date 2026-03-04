@@ -16,7 +16,8 @@ class GetItemsByCategoryHandler
     public function handle(
         array $categoryIds = [],
         ?array $bbox = null,
-        ?int $limit = null
+        ?int $limit = null,
+        ?string $sort = null
     ): array {
 
         if ($bbox && !empty($categoryIds)) {
@@ -27,7 +28,8 @@ class GetItemsByCategoryHandler
                 $bbox[1],
                 $bbox[2],
                 $bbox[3],
-                $limit
+                $limit,
+                $sort
             );
 
         } elseif ($bbox) {
@@ -37,16 +39,17 @@ class GetItemsByCategoryHandler
                 $bbox[1],
                 $bbox[2],
                 $bbox[3],
-                $limit
+                $limit,
+                $sort
             );
 
         } elseif (!empty($categoryIds)) {
 
-            $items = $this->repository->findItemsByCategories($categoryIds, $limit);
+            $items = $this->repository->findItemsByCategories($categoryIds, $limit, $sort);
 
         } else {
 
-            $items = $this->repository->findAllItems($limit);
+            $items = $this->repository->findAllItems($limit, $sort);
         }
 
         if ($limit !== null) {

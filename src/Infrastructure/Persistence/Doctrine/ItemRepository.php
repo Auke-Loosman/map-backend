@@ -21,19 +21,18 @@ class ItemRepository implements ItemRepositoryInterface
         $this->entityManager->flush();
     }
 
-    public function findItemsByCategory(Uuid $categoryId): array
-    {
-        return $this->entityManager
-            ->getRepository(Item::class)
-            ->findBy(['categoryId' => $categoryId]);
-    }
-
-    public function findAllItems(?int $limit = null): array
+    public function findItemsByCategory(Uuid $categoryId, ?int $limit = null, ?string $sort = null): array
     {
         $qb = $this->entityManager
             ->createQueryBuilder()
             ->select('i')
-            ->from(Item::class, 'i');
+            ->from(Item::class, 'i')
+            ->where('i.categoryId = :category')
+            ->setParameter('category', $categoryId, 'uuid');
+
+        if ($sort !== null) {
+            $qb->orderBy('i.' . $sort, 'ASC');
+        }
 
         if ($limit !== null) {
             $qb->setMaxResults($limit);
@@ -42,7 +41,25 @@ class ItemRepository implements ItemRepositoryInterface
         return $qb->getQuery()->getResult();
     }
 
-    public function findItemsByCategories(array $categoryIds, ?int $limit = null): array
+    public function findAllItems(?int $limit = null, ?string $sort = null): array
+    {
+        $qb = $this->entityManager
+            ->createQueryBuilder()
+            ->select('i')
+            ->from(Item::class, 'i');
+
+        if ($sort !== null) {
+            $qb->orderBy('i.' . $sort, 'ASC');
+        }
+
+        if ($limit !== null) {
+            $qb->setMaxResults($limit);
+        }
+
+        return $qb->getQuery()->getResult();
+    }
+
+    public function findItemsByCategories(array $categoryIds, ?int $limit = null, ?string $sort = null): array
     {
         $qb = $this->entityManager
             ->createQueryBuilder()
@@ -61,6 +78,10 @@ class ItemRepository implements ItemRepositoryInterface
             $qb->setMaxResults($limit);
         }
 
+        if ($sort !== null) {
+            $qb->orderBy('i.' . $sort, 'ASC');
+        }
+
         return $qb->getQuery()->getResult();
     }
 
@@ -69,7 +90,8 @@ class ItemRepository implements ItemRepositoryInterface
         float $minLng,
         float $maxLat,
         float $maxLng,
-        ?int $limit = null
+        ?int $limit = null,
+        ?string $sort = null
     ): array {
         $qb = $this->entityManager
             ->createQueryBuilder()
@@ -86,6 +108,10 @@ class ItemRepository implements ItemRepositoryInterface
             $qb->setMaxResults($limit);
         }
 
+        if ($sort !== null) {
+            $qb->orderBy('i.' . $sort, 'ASC');
+        }
+
         return $qb->getQuery()->getResult();
     }
 
@@ -95,7 +121,8 @@ class ItemRepository implements ItemRepositoryInterface
         float $minLng,
         float $maxLat,
         float $maxLng,
-        ?int $limit = null
+        ?int $limit = null,
+        ?string $sort = null
     ): array {
         $qb = $this->entityManager
             ->createQueryBuilder()
@@ -124,17 +151,26 @@ class ItemRepository implements ItemRepositoryInterface
             $qb->setMaxResults($limit);
         }
 
+        if ($sort !== null) {
+            $qb->orderBy('i.' . $sort, 'ASC');
+        }
+
         return $qb->getQuery()->getResult();
     }
 
-    public function findItemsWithLimit(int $limit): array
+    public function findItemsWithLimit(int $limit, ?string $sort = null): array
     {
-        return $this->entityManager
+        $qb = $this->entityManager
             ->createQueryBuilder()
             ->select('i')
             ->from(Item::class, 'i')
-            ->setMaxResults($limit)
-            ->getQuery()
-            ->getResult();
+            ->setMaxResults($limit);
+
+
+        if ($sort !== null) {
+            $qb->orderBy('i.' . $sort, 'ASC');
+        }
+
+        return $qb->getQuery()->getResult();
     }
 }

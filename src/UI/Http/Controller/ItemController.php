@@ -66,8 +66,9 @@ class ItemController
         $limit = $request->query->get('limit');
 
         $limit = $limit !== null ? (int) $limit : null;
+        $sort = $request->query->get('sort');
 
-        $items = $this->getItemsHandler->handle($uuids, $bbox, $limit);
+        $items = $this->getItemsHandler->handle($uuids, $bbox, $limit, $sort);
 
         $result = [];
 
