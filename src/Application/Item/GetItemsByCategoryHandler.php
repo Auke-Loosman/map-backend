@@ -18,6 +18,16 @@ class GetItemsByCategoryHandler
         ?array $bbox = null
     ): array {
 
+        if ($bbox && !empty($categoryIds)) {
+            return $this->repository->findItemsByCategoriesAndBoundingBox(
+                $categoryIds,
+                $bbox[0],
+                $bbox[1],
+                $bbox[2],
+                $bbox[3]
+            );
+        }
+
         if ($bbox) {
             return $this->repository->findItemsInBoundingBox(
                 $bbox[0],
@@ -27,10 +37,10 @@ class GetItemsByCategoryHandler
             );
         }
 
-        if (empty($categoryIds)) {
-            return $this->repository->findAllItems();
+        if (!empty($categoryIds)) {
+            return $this->repository->findItemsByCategories($categoryIds);
         }
 
-        return $this->repository->findItemsByCategories($categoryIds);
+        return $this->repository->findAllItems();
     }
 }

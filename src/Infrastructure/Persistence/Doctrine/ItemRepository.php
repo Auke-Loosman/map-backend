@@ -71,4 +71,37 @@ class ItemRepository implements ItemRepositoryInterface
             ->getQuery()
             ->getResult();
     }
+
+    public function findItemsByCategoriesAndBoundingBox(
+        array $categoryIds,
+        float $minLat,
+        float $minLng,
+        float $maxLat,
+        float $maxLng
+    ): array {
+        $qb = $this->entityManager
+            ->createQueryBuilder()
+            ->select('i')
+            ->from(Item::class, 'i')
+            ->where('i.latitude BETWEEN :minLat AND :maxLat')
+            ->andWhere('i.longitude BETWEEN :minLng AND :maxLng')
+            ->setParameter('minLat', $minLat)
+            ->setParameter('maxLat', $maxLat)
+            ->setParameter('minLng', $minLng)
+            ->setParameter('maxLng', $maxLng);
+
+        if (count($categoryIds) === 1) {
+
+            $qb->andWhere('i.categoryId = :category')
+            ->setParameter('category', $categoryIds[0], 'uuid');
+
+        } else {
+
+            $qb->andWhere('i.categoryId IN (:categories)')
+            ->setParameter('categories', $categoryIds);
+
+        }
+
+        return $qb->getQuery()->getResult();
+    }
 }
