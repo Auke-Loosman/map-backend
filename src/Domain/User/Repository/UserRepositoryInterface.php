@@ -8,9 +8,9 @@ use App\Domain\User\Entity\User;
 
 interface UserRepositoryInterface
 {
-    public function save(User $user): void;
+    public function saveUser(User $user): void;
 
-    public function findByEmail(string $email): ?User;
+    public function findUserByEmail(string $email): ?User;
 
-    public function findById(int $id): ?User;
+    public function findUserById(int $id): ?User;
 }
