@@ -62,7 +62,12 @@ class ItemController
                 $bbox = array_map('floatval', $parts);
             }
         }
-        $items = $this->getItemsHandler->handle($uuids, $bbox);
+
+        $limit = $request->query->get('limit');
+
+        $limit = $limit !== null ? (int) $limit : null;
+
+        $items = $this->getItemsHandler->handle($uuids, $bbox, $limit);
 
         $result = [];
 
