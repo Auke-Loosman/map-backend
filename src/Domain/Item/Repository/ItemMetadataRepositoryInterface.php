@@ -8,5 +8,5 @@ use App\Domain\Item\Entity\ItemMetadata;
 
 interface ItemMetadataRepositoryInterface
 {
-    public function saveMetadata(ItemMetadata $metadata): void;
+    public function saveItemMetadata(ItemMetadata $metadata): void;
 }

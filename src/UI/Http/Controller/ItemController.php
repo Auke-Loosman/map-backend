@@ -30,7 +30,8 @@ class ItemController
             $data['description'],
             Uuid::fromString($data['categoryId']),
             $data['latitude'] ?? null,
-            $data['longitude'] ?? null
+            $data['longitude'] ?? null,
+            $data['metadata'] ?? []
         );
 
         $item = $this->createItemHandler->handle($command);

@@ -13,6 +13,7 @@ class CreateItemCommand
         public string $description,
         public Uuid $categoryId,
         public ?float $latitude,
-        public ?float $longitude
+        public ?float $longitude,
+        public array $metadata = []
     ) {}
 }
