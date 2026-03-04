@@ -48,11 +48,21 @@ class ItemController
         $categoryIds = $request->query->all('categories');
 
         $uuids = array_map(
-            fn($id) => \Symfony\Component\Uid\Uuid::fromString($id),
+            fn ($id) => \Symfony\Component\Uid\Uuid::fromString($id),
             $categoryIds
         );
 
-        $items = $this->getItemsHandler->handle($uuids);
+        $bboxParam = $request->query->get('bbox');
+        $bbox = null;
+
+        if ($bboxParam) {
+            $parts = explode(',', $bboxParam);
+
+            if (count($parts) === 4) {
+                $bbox = array_map('floatval', $parts);
+            }
+        }
+        $items = $this->getItemsHandler->handle($uuids, $bbox);
 
         $result = [];
 
@@ -63,7 +73,7 @@ class ItemController
                 'description' => $item->getDescription(),
                 'latitude' => $item->getLatitude(),
                 'longitude' => $item->getLongitude(),
-                'categoryId' => $item->getCategoryId()->toRfc4122()
+                'categoryId' => $item->getCategoryId()->toRfc4122(),
             ];
         }
 

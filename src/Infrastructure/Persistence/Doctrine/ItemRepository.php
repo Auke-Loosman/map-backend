@@ -51,4 +51,24 @@ class ItemRepository implements ItemRepositoryInterface
         }
         return $qb->getQuery()->getResult();
     }
+
+    public function findItemsInBoundingBox(
+        float $minLat,
+        float $minLng,
+        float $maxLat,
+        float $maxLng
+    ): array {
+        return $this->entityManager
+            ->createQueryBuilder()
+            ->select('i')
+            ->from(Item::class, 'i')
+            ->where('i.latitude BETWEEN :minLat AND :maxLat')
+            ->andWhere('i.longitude BETWEEN :minLng AND :maxLng')
+            ->setParameter('minLat', $minLat)
+            ->setParameter('maxLat', $maxLat)
+            ->setParameter('minLng', $minLng)
+            ->setParameter('maxLng', $maxLng)
+            ->getQuery()
+            ->getResult();
+    }
 }
