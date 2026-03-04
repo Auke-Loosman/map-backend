@@ -11,14 +11,14 @@ use Symfony\Component\Uid\Uuid;
 
 use App\Application\Item\CreateItemCommand;
 use App\Application\Item\CreateItemHandler;
-use App\Application\Item\GetItemsByCategoryHandler;
+use App\UI\Http\Service\ItemQueryService;
 use App\UI\Http\Response\ErrorResponse;
 
 class ItemController
 {
     public function __construct(
         private CreateItemHandler $createItemHandler,
-        private GetItemsByCategoryHandler $getItemsHandler
+        private ItemQueryService $itemQueryService
     ) {}
 
     #[Route('/api/items', methods: ['POST'])]
@@ -46,66 +46,16 @@ class ItemController
     #[Route('/api/items', methods: ['GET'])]
     public function getItems(Request $request): JsonResponse
     {
-        $categoryIds = $request->query->all('categories');
+        $result = $this->itemQueryService->getItems($request);
 
-        $uuids = array_map(
-            fn ($id) => Uuid::fromString($id),
-            $categoryIds
-        );
-
-        /*
-        * Bounding box
-        */
-        $bboxParam = $request->query->get('bbox');
-        $bbox = null;
-
-        if ($bboxParam !== null) {
-
-            $parts = explode(',', $bboxParam);
-
-            if (count($parts) !== 4) {
-                return new ErrorResponse(
-                    'invalid_request',
-                    'bbox must contain 4 values'
-                );
-            }
-
-            $bbox = array_map('floatval', $parts);
+        if ($result instanceof ErrorResponse) {
+            return $result;
         }
 
-        /*
-        * Limit validation
-        */
-        $limit = $request->query->get('limit');
+        $items = [];
 
-        if ($limit !== null) {
-
-            $limit = (int) $limit;
-
-            if ($limit < 1 || $limit > 100) {
-                return new ErrorResponse(
-                    'invalid_request',
-                    'limit must be between 1 and 100'
-                );
-            }
-        }
-
-        /*
-        * Sort
-        */
-        $sort = $request->query->get('sort');
-
-        $items = $this->getItemsHandler->handle(
-            $uuids,
-            $bbox,
-            $limit,
-            $sort
-        );
-
-        $result = [];
-
-        foreach ($items as $item) {
-            $result[] = [
+        foreach ($result as $item) {
+            $items[] = [
                 'id' => $item->getId()->toRfc4122(),
                 'name' => $item->getName(),
                 'description' => $item->getDescription(),
@@ -115,6 +65,6 @@ class ItemController
             ];
         }
 
-        return new JsonResponse($result);
+        return new JsonResponse($items);
     }
 }
