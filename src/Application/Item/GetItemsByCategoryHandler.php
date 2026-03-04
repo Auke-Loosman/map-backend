@@ -15,32 +15,42 @@ class GetItemsByCategoryHandler
 
     public function handle(
         array $categoryIds = [],
-        ?array $bbox = null
+        ?array $bbox = null,
+        ?int $limit = null
     ): array {
 
         if ($bbox && !empty($categoryIds)) {
-            return $this->repository->findItemsByCategoriesAndBoundingBox(
+
+            $items = $this->repository->findItemsByCategoriesAndBoundingBox(
                 $categoryIds,
                 $bbox[0],
                 $bbox[1],
                 $bbox[2],
                 $bbox[3]
             );
-        }
 
-        if ($bbox) {
-            return $this->repository->findItemsInBoundingBox(
+        } elseif ($bbox) {
+
+            $items = $this->repository->findItemsInBoundingBox(
                 $bbox[0],
                 $bbox[1],
                 $bbox[2],
                 $bbox[3]
             );
+
+        } elseif (!empty($categoryIds)) {
+
+            $items = $this->repository->findItemsByCategories($categoryIds);
+
+        } else {
+
+            $items = $this->repository->findAllItems();
         }
 
-        if (!empty($categoryIds)) {
-            return $this->repository->findItemsByCategories($categoryIds);
+        if ($limit !== null) {
+            return array_slice($items, 0, $limit);
         }
 
-        return $this->repository->findAllItems();
+        return $items;
     }
 }
