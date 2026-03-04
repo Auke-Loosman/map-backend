@@ -12,6 +12,7 @@ use Symfony\Component\Uid\Uuid;
 use App\Application\Item\CreateItemCommand;
 use App\Application\Item\CreateItemHandler;
 use App\Application\Item\GetItemsByCategoryHandler;
+use App\UI\Http\Response\ErrorResponse;
 
 class ItemController
 {
@@ -63,9 +64,9 @@ class ItemController
             $parts = explode(',', $bboxParam);
 
             if (count($parts) !== 4) {
-                return new JsonResponse(
-                    ['error' => 'bbox must contain 4 values'],
-                    400
+                return new ErrorResponse(
+                    'invalid_request',
+                    'bbox must contain 4 values'
                 );
             }
 
@@ -82,9 +83,9 @@ class ItemController
             $limit = (int) $limit;
 
             if ($limit < 1 || $limit > 100) {
-                return new JsonResponse(
-                    ['error' => 'limit must be between 1 and 100'],
-                    400
+                return new ErrorResponse(
+                    'invalid_request',
+                    'limit must be between 1 and 100'
                 );
             }
         }
