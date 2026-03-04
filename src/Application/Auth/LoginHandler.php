@@ -15,7 +15,7 @@ class LoginHandler
         private UserPasswordHasherInterface $passwordHasher
     ) {}
 
-    public function handle(LoginCommand $command)
+    public function handle(LoginCommand $command): User
     {
         $user = $this->userRepository->findUserByEmail($command->email);
 
