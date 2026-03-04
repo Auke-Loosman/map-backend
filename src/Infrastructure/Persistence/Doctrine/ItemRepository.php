@@ -27,4 +27,11 @@ class ItemRepository implements ItemRepositoryInterface
             ->getRepository(Item::class)
             ->findBy(['categoryId' => $categoryId]);
     }
+
+    public function findAllItems(): array
+    {
+        return $this->entityManager
+            ->getRepository(Item::class)
+            ->findAll();
+    }
 }

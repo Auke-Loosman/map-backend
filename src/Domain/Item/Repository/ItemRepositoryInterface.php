@@ -12,4 +12,6 @@ interface ItemRepositoryInterface
     public function saveItem(Item $item): void;
 
     public function findItemsByCategory(Uuid $categoryId): array;
+
+    public function findAllItems(): array;
 }
