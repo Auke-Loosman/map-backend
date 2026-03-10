@@ -13,6 +13,8 @@ use App\Application\Item\CreateItemCommand;
 use App\Application\Item\CreateItemHandler;
 use App\Application\Item\DeleteItemCommand;
 use App\Application\Item\DeleteItemHandler;
+use App\Application\Item\UpdateItemCommand;
+use App\Application\Item\UpdateItemHandler;
 use App\UI\Http\Service\ItemQueryService;
 use App\UI\Http\Response\ErrorResponse;
 use App\UI\Http\Response\ItemResponseFactory;
@@ -22,6 +24,7 @@ class ItemController
     public function __construct(
         private CreateItemHandler $createItemHandler,
         private DeleteItemHandler $deleteItemHandler,
+        private UpdateItemHandler $updateItemHandler,
         private ItemQueryService $itemQueryService,
         private ItemResponseFactory $itemResponseFactory
     ) {}
@@ -70,6 +73,26 @@ class ItemController
         );
 
         $this->deleteItemHandler->handle($command);
+
+        return new JsonResponse(null, 204);
+    }
+
+    #[Route('/api/items/{id}', methods: ['PUT'])]
+    public function updateItem(string $id, Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        $command = new UpdateItemCommand(
+            Uuid::fromString($id),
+            $data['name'] ?? null,
+            $data['description'] ?? null,
+            isset($data['categoryId']) ? Uuid::fromString($data['categoryId']) : null,
+            $data['latitude'] ?? null,
+            $data['longitude'] ?? null,
+            $data['metadata'] ?? null
+        );
+
+        $this->updateItemHandler->handle($command);
 
         return new JsonResponse(null, 204);
     }

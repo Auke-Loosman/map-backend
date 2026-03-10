@@ -78,4 +78,33 @@ class Item
     {
         return $this->longitude;
     }
+
+    public function setName(string $name): void
+    {
+        if (trim($name) === '') {
+            throw new \InvalidArgumentException('Item name cannot be empty');
+        }
+
+        $this->name = $name;
+    }
+
+    public function setDescription(string $description): void
+    {
+        $this->description = $description;
+    }
+
+    public function setCategoryId(Uuid $categoryId): void
+    {
+        $this->categoryId = $categoryId;
+    }
+
+    public function setLatitude(?float $latitude): void
+    {
+        $this->latitude = $latitude;
+    }
+
+    public function setLongitude(?float $longitude): void
+    {
+        $this->longitude = $longitude;
+    }
 }
