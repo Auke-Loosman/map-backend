@@ -14,8 +14,8 @@ use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'uuid', unique: true)]
-    private Uuid $id;
+    #[ORM\Column(type: 'string', length: 36, unique: true)]
+    private string $id;
 
     #[ORM\Column(unique: true)]
     private string $email;
@@ -31,7 +31,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         string $password,
         string $role = 'ROLE_USER'
     ) {
-        $this->id = Uuid::v4();
+        $this->id = Uuid::v4()->toRfc4122();
 
         if (empty($email)) {
             throw new \InvalidArgumentException('Email cannot be empty');
@@ -50,7 +50,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->role = $role;
     }
 
-    public function getId(): Uuid
+    public function getId(): string
     {
         return $this->id;
     }

@@ -9,6 +9,6 @@ use Symfony\Component\Uid\Uuid;
 class DeleteItemCommand
 {
     public function __construct(
-        public Uuid $itemId
+        public string $itemId
     ) {}
 }

@@ -37,7 +37,7 @@ class ItemController
         $command = new CreateItemCommand(
             $data['name'],
             $data['description'],
-            Uuid::fromString($data['categoryId']),
+            $data['categoryId'],
             $data['latitude'] ?? null,
             $data['longitude'] ?? null,
             $data['metadata'] ?? []
@@ -69,7 +69,7 @@ class ItemController
     public function deleteItem(string $id): JsonResponse
     {
         $command = new DeleteItemCommand(
-            Uuid::fromString($id)
+            $id
         );
 
         $this->deleteItemHandler->handle($command);
@@ -83,10 +83,10 @@ class ItemController
         $data = json_decode($request->getContent(), true);
 
         $command = new UpdateItemCommand(
-            Uuid::fromString($id),
+            $id,
             $data['name'] ?? null,
             $data['description'] ?? null,
-            isset($data['categoryId']) ? Uuid::fromString($data['categoryId']) : null,
+            $data['categoryId'] ?? null,
             $data['latitude'] ?? null,
             $data['longitude'] ?? null,
             $data['metadata'] ?? null

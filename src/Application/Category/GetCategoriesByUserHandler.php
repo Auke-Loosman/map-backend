@@ -5,7 +5,6 @@ declare(strict_types=1);
 namespace App\Application\Category;
 
 use App\Domain\Category\Repository\CategoryRepositoryInterface;
-use Symfony\Component\Uid\Uuid;
 
 class GetCategoriesByUserHandler
 {
@@ -13,7 +12,7 @@ class GetCategoriesByUserHandler
         private CategoryRepositoryInterface $repository
     ) {}
 
-    public function handle(Uuid $userId): array
+    public function handle(string $userId): array
     {
         return $this->repository->findCategoriesByUserId($userId);
     }

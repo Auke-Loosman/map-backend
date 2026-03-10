@@ -11,12 +11,13 @@ class ItemResponseFactory
     public function create(Item $item): array
     {
         return [
-            'id' => $item->getId()->toRfc4122(),
+            'id' => $item->getId(),
             'name' => $item->getName(),
             'description' => $item->getDescription(),
             'latitude' => $item->getLatitude(),
             'longitude' => $item->getLongitude(),
-            'categoryId' => $item->getCategoryId()->toRfc4122(),
+            'categoryId' => $item->getCategoryId(),
+
         ];
     }
 

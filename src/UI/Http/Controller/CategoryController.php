@@ -33,13 +33,13 @@ class CategoryController
 
         $command = new CreateCategoryCommand(
             $data['name'],
-            Uuid::fromString($data['userId'])
+            $data['userId']
         );
 
         $category = $this->createCategoryHandler->handle($command);
 
         return new JsonResponse([
-            'id' => $category->getId()->toRfc4122(),
+            'id' => $category->getId(),
             'name' => $category->getName()
         ], 201);
     }
@@ -54,7 +54,7 @@ class CategoryController
 
         $data = array_map(function ($category) {
             return [
-                'id' => $category->getId()->toRfc4122(),
+                'id' => $category->getId(),
                 'name' => $category->getName()
             ];
         }, $categories);
@@ -66,7 +66,7 @@ class CategoryController
     public function deleteCategory(string $id): JsonResponse
     {
         $command = new DeleteCategoryCommand(
-            Uuid::fromString($id)
+            $id
         );
 
         $this->deleteCategoryHandler->handle($command);
@@ -80,7 +80,7 @@ class CategoryController
         $data = json_decode($request->getContent(), true);
 
         $command = new UpdateCategoryCommand(
-            Uuid::fromString($id),
+            $id,
             $data['name'] ?? null
         );
 

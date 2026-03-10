@@ -10,6 +10,6 @@ class CreateCategoryCommand
 {
     public function __construct(
         public string $name,
-        public Uuid $userId
+        public string $userId
     ) {}
 }

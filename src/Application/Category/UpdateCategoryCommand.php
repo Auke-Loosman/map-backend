@@ -9,7 +9,7 @@ use Symfony\Component\Uid\Uuid;
 class UpdateCategoryCommand
 {
     public function __construct(
-        public Uuid $categoryId,
+        public string $categoryId,
         public ?string $name = null
     ) {}
 }

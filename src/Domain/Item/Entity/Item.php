@@ -12,8 +12,8 @@ use Symfony\Component\Uid\Uuid;
 class Item
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'uuid', unique: true)]
-    private Uuid $id;
+    #[ORM\Column(type: 'string', length: 36, unique: true)]
+    private string $id;
 
     #[ORM\Column]
     private string $name;
@@ -21,8 +21,8 @@ class Item
     #[ORM\Column(type: 'text')]
     private string $description;
 
-    #[ORM\Column(type: 'uuid')]
-    private Uuid $categoryId;
+    #[ORM\Column(type: 'string', length: 36)]
+    private string $categoryId;
 
     #[ORM\Column(nullable: true)]
     private ?float $latitude;
@@ -33,7 +33,7 @@ class Item
     public function __construct(
         string $name,
         string $description,
-        Uuid $categoryId,
+        string $categoryId,
         ?float $latitude,
         ?float $longitude
     ) {
@@ -41,7 +41,7 @@ class Item
             throw new \InvalidArgumentException('Item name cannot be empty');
         }
 
-        $this->id = Uuid::v4();
+        $this->id = Uuid::v4()->toRfc4122();
         $this->name = $name;
         $this->description = $description;
         $this->categoryId = $categoryId;
@@ -49,7 +49,7 @@ class Item
         $this->longitude = $longitude;
     }
 
-    public function getId(): Uuid
+    public function getId(): string
     {
         return $this->id;
     }
@@ -64,7 +64,7 @@ class Item
         return $this->description;
     }
 
-    public function getCategoryId(): Uuid
+    public function getCategoryId(): string
     {
         return $this->categoryId;
     }
@@ -93,7 +93,7 @@ class Item
         $this->description = $description;
     }
 
-    public function setCategoryId(Uuid $categoryId): void
+    public function setCategoryId(string $categoryId): void
     {
         $this->categoryId = $categoryId;
     }

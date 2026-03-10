@@ -12,11 +12,11 @@ use Symfony\Component\Uid\Uuid;
 class ItemMetadata
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'uuid')]
-    private Uuid $id;
+    #[ORM\Column(type: 'string', length: 36, unique: true)]
+    private string $id;
 
-    #[ORM\Column(type: 'uuid')]
-    private Uuid $itemId;
+    #[ORM\Column(type: 'string', length: 36)]
+    private string $itemId;
 
     #[ORM\Column]
     private string $key;
@@ -25,7 +25,7 @@ class ItemMetadata
     private string $value;
 
     public function __construct(
-        Uuid $itemId,
+        string $itemId,
         string $key,
         string $value
     ) {
@@ -33,7 +33,7 @@ class ItemMetadata
             throw new \InvalidArgumentException('Metadata key cannot be empty');
         }
 
-        $this->id = Uuid::v4();
+        $this->id = Uuid::v4()->toRfc4122();
         $this->itemId = $itemId;
         $this->key = $key;
         $this->value = $value;
@@ -49,7 +49,7 @@ class ItemMetadata
         return $this->value;
     }
 
-    public function getItemId(): Uuid
+    public function getItemId(): string
     {
         return $this->itemId;
     }

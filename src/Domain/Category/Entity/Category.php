@@ -12,18 +12,18 @@ use Symfony\Component\Uid\Uuid;
 class Category
 {
     #[ORM\Id]
-    #[ORM\Column(type: 'uuid', unique: true)]
-    private Uuid $id;
+    #[ORM\Column(type: 'string', length: 36, unique: true)]
+    private string $id;
 
     #[ORM\Column]
     private string $name;
 
-    #[ORM\Column(type: 'uuid')]
-    private Uuid $userId;
+    #[ORM\Column(type: 'string', length: 36)]
+    private string $userId;
 
-    public function __construct(string $name, Uuid $userId)
+    public function __construct(string $name, string $userId)
     {
-        $this->id = Uuid::v4();
+        $this->id = Uuid::v4()->toRfc4122();
 
         if (trim($name) === '') {
             throw new \InvalidArgumentException('Category name cannot be empty');
@@ -33,7 +33,7 @@ class Category
         $this->userId = $userId;
     }
 
-    public function getId(): Uuid
+    public function getId(): string
     {
         return $this->id;
     }
@@ -43,7 +43,7 @@ class Category
         return $this->name;
     }
 
-    public function getUserId(): Uuid
+    public function getUserId(): string
     {
         return $this->userId;
     }

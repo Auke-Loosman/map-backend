@@ -9,6 +9,6 @@ use Symfony\Component\Uid\Uuid;
 class DeleteCategoryCommand
 {
     public function __construct(
-        public Uuid $categoryId
+        public string $categoryId
     ) {}
 }
