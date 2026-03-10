@@ -14,13 +14,16 @@ use App\Application\Category\CreateCategoryHandler;
 use App\Application\Category\GetCategoriesByUserHandler;
 use App\Application\Category\DeleteCategoryCommand;
 use App\Application\Category\DeleteCategoryHandler;
+use App\Application\Category\UpdateCategoryCommand;
+use App\Application\Category\UpdateCategoryHandler;
 
 class CategoryController
 {
     public function __construct(
         private CreateCategoryHandler $createCategoryHandler,
         private GetCategoriesByUserHandler $getCategoriesHandler,
-        private DeleteCategoryHandler $deleteCategoryHandler
+        private DeleteCategoryHandler $deleteCategoryHandler,
+        private UpdateCategoryHandler $updateCategoryHandler
     ) {}
 
     #[Route('/api/categories', methods: ['POST'])]
@@ -67,6 +70,21 @@ class CategoryController
         );
 
         $this->deleteCategoryHandler->handle($command);
+
+        return new JsonResponse(null, 204);
+    }
+
+    #[Route('/api/categories/{id}', methods: ['PUT'])]
+    public function updateCategory(string $id, Request $request): JsonResponse
+    {
+        $data = json_decode($request->getContent(), true);
+
+        $command = new UpdateCategoryCommand(
+            Uuid::fromString($id),
+            $data['name'] ?? null
+        );
+
+        $this->updateCategoryHandler->handle($command);
 
         return new JsonResponse(null, 204);
     }

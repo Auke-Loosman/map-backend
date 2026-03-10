@@ -47,4 +47,13 @@ class Category
     {
         return $this->userId;
     }
+
+    public function setName(string $name): void
+    {
+        if (trim($name) === '') {
+            throw new \InvalidArgumentException('Category name cannot be empty');
+        }
+
+        $this->name = $name;
+    }
 }
