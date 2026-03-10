@@ -12,12 +12,15 @@ use Symfony\Component\Uid\Uuid;
 use App\Application\Category\CreateCategoryCommand;
 use App\Application\Category\CreateCategoryHandler;
 use App\Application\Category\GetCategoriesByUserHandler;
+use App\Application\Category\DeleteCategoryCommand;
+use App\Application\Category\DeleteCategoryHandler;
 
 class CategoryController
 {
     public function __construct(
         private CreateCategoryHandler $createCategoryHandler,
-        private GetCategoriesByUserHandler $getCategoriesHandler
+        private GetCategoriesByUserHandler $getCategoriesHandler,
+        private DeleteCategoryHandler $deleteCategoryHandler
     ) {}
 
     #[Route('/api/categories', methods: ['POST'])]
@@ -54,5 +57,17 @@ class CategoryController
         }, $categories);
 
         return new JsonResponse($data);
+    }
+
+    #[Route('/api/categories/{id}', methods: ['DELETE'])]
+    public function deleteCategory(string $id): JsonResponse
+    {
+        $command = new DeleteCategoryCommand(
+            Uuid::fromString($id)
+        );
+
+        $this->deleteCategoryHandler->handle($command);
+
+        return new JsonResponse(null, 204);
     }
 }

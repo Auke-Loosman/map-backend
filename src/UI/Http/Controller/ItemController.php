@@ -11,6 +11,8 @@ use Symfony\Component\Uid\Uuid;
 
 use App\Application\Item\CreateItemCommand;
 use App\Application\Item\CreateItemHandler;
+use App\Application\Item\DeleteItemCommand;
+use App\Application\Item\DeleteItemHandler;
 use App\UI\Http\Service\ItemQueryService;
 use App\UI\Http\Response\ErrorResponse;
 use App\UI\Http\Response\ItemResponseFactory;
@@ -19,6 +21,7 @@ class ItemController
 {
     public function __construct(
         private CreateItemHandler $createItemHandler,
+        private DeleteItemHandler $deleteItemHandler,
         private ItemQueryService $itemQueryService,
         private ItemResponseFactory $itemResponseFactory
     ) {}
@@ -57,5 +60,17 @@ class ItemController
         return new JsonResponse(
             $this->itemResponseFactory->createCollection($result)
         );
+    }
+
+    #[Route('/api/items/{id}', methods: ['DELETE'])]
+    public function deleteItem(string $id): JsonResponse
+    {
+        $command = new DeleteItemCommand(
+            Uuid::fromString($id)
+        );
+
+        $this->deleteItemHandler->handle($command);
+
+        return new JsonResponse(null, 204);
     }
 }
